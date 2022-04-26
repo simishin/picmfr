@@ -5,4 +5,5 @@ package qwr.util;
 в данный класс выношу операции, которые раньше собирал в FileType
  */
 public class FileOperations {
+
 }//class FileOperations

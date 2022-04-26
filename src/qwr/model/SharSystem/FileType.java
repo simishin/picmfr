@@ -113,7 +113,7 @@ public String   getPach(){return this.pach;}
 public void     setPach(String pach) { this.pach = pach; }
 
 /**
- * создаю резервную копию файла методом переименования и удаления пердыдущей версии
+ * создаю резервную копию файла методом переименования и удаления предыдущий версии
  * вызывается BgFile.saveLocalDataSources(boolean isSave)
  * @return    */
 public boolean backUp(){
@@ -158,6 +158,7 @@ public  boolean save(String jpath){
 }//saveAs----------------------------------------------------------------------------
 /**
  * Чтение файла, указанного в переменной pach
+ * через вызов метода GrRecords.XXX.readRecord(words,scr)
  * @return истина, если загрузили данные полностью, иначе 
  * чтение файла не возможно
  */
@@ -166,9 +167,9 @@ public boolean loadLoc(){
     Path path = Paths.get(pach);
     present = Files.exists(path);
     if (!present) {prnq("ERROR file is no exists! "+path); return false;}
-    //проверяю на читаемость и нулевую длинну файла
+    //проверяю на читаемость и нулевую длину файла
     if (!Files.isReadable(path)){prnq("ERROR not read file! "+path); return false;}
-    try { if (Files.size(path) < l) {//проверяю длинну файла
+    try { if (Files.size(path) < l) {//проверяю длину файла
         prnq("\nERROR file: "+path+" is litl < "+l); return false;}
     } catch (IOException e) { e.printStackTrace(); }
 
@@ -177,7 +178,7 @@ public boolean loadLoc(){
             assert prnq("Load string "+readsrt.size()+" from "+path);
             for (String str: readsrt){//читаю последовательно строки файла
                 if (str.length()<5) {assert prnq("Error length");continue;}
-                String[] words =str.split(sepr);//создаю масив значений
+                String[] words =str.split(sepr);//создаю массив значений
                 try { GrRecords.valueOf(words[0]);//если не существует значение
                 }catch(IllegalArgumentException e){
 //                    assert prnq("Not define Word {"+words[0]+"}");
