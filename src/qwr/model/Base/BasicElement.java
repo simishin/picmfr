@@ -18,8 +18,8 @@ package qwr.model.Base;
 
 import qwr.util.DateTim;
 
-import static qwr.util.BgFile.prnq;
-import static qwr.util.BgFile.sepr;
+import static qwr.util.CollectUtl.prnq;
+import static qwr.util.CollectUtl.sepr;
 
 public abstract class BasicElement {
     private static int  count=0;//cчетчик для элементов по умолчанию

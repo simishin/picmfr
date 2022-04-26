@@ -5,20 +5,14 @@
 package qwr.Inizial;
 
 //import qwr.footing.InfcElm;
-import qwr.model.Base.EiFile;
-import qwr.model.Base.EiPath;
 import qwr.model.Base.EiUser;
-import qwr.model.SharSystem.GrRecords;
 //import qwr.model.reference.*;
 //import qwr.reports.Elcol;
-import qwr.util.BgFile;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
-import static qwr.util.BgFile.prnq;
+import static qwr.util.CollectUtl.prnq;
 
 public class InGuid {
     /**
@@ -36,9 +30,9 @@ public class InGuid {
     //lsFile используется для подгрузке данных из внешних источников в
     //util.BgFile.ploadDataExternalSources()
     //данные из lsFile сохраняются и восстанавливаются из файла типа "lsf" FileType
-    public static ArrayList<EiFile> lsFile=new ArrayList<>(950);//файлы
+//    public static ArrayList<EiFile> lsFile=new ArrayList<>(950);//файлы
     public static Map<Long,EiUser>  mpUser=new HashMap<Long,EiUser>(32);
-    public static ArrayList<EiPath> lpPath=new ArrayList<>();//спиок путей
+//    public static ArrayList<EiPath> lpPath=new ArrayList<>();//спиок путей
 /*    public static ArrayList<EiCorrect> lsCorr=new ArrayList<>();//список транзакций
     //справочники проекта
     public static ArrayList<EiRDoc> lsRDoc=new ArrayList<>(950);//чертежи
@@ -62,8 +56,8 @@ public class InGuid {
         assert prnq("$ class InGuid static block initialization 44 $");
         //создаю первого пользовтеля и болванку под файл инициализации
 
-        mpUser.putIfAbsent(1L,new EiUser(BgFile.getCmpName(),"This Computer"));
-        lpPath.add(new EiPath(System.getProperty("user.dir"),0));
+//        mpUser.putIfAbsent(1L,new EiUser(BgFile.getCmpName(),"This Computer"));
+//        lpPath.add(new EiPath(System.getProperty("user.dir"),0));
     }//конец блока инициализатора ***************************************************
 
 /*

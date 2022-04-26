@@ -23,7 +23,7 @@
  */
 package qwr.model.Base;
 
-import static qwr.util.BgFile.prnq;
+import static qwr.util.CollectUtl.prnq;
 
 public class EiUser extends BaseElement {
     public static final int sizeAr=8;//количество полей в текстовом файле данных

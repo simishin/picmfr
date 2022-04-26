@@ -3,19 +3,18 @@ package qwr;
 import qwr.model.Base.PublStat;
 import qwr.model.Base.TestClass;
 import qwr.model.SharSystem.RiUser;
-import qwr.util.BgFile;
 import qwr.util.CollectUtl;
 import qwr.util.DateTim;
 
 import java.util.ArrayList;
 
 import static java.time.Instant.*;
-import static qwr.util.BgFile.prnq;
+import static qwr.util.CollectUtl.prnq;
 
 public class MainTestClass {
     public static void main(String[] args) {
         prnq("\n------- Testing ----------");
-        prnq(BgFile.getNowData());
+//        prnq(BgFile.getNowData());
         prnq("int/2=2147483647");
         prnq("int  ="+ Math.toIntExact(now().getEpochSecond()));
         prnq("Время создания int  ="+ DateTim.newSeconds()+

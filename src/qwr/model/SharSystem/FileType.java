@@ -6,14 +6,11 @@
  */
 package qwr.model.SharSystem;
 
-import qwr.model.Base.EiPath;
 //import qwr.util.BgFile;
-import qwr.util.DateTim;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static qwr.util.CollectUtl.*;
@@ -35,6 +32,7 @@ xlsx(345,"Файл электронных таблиц проекта",false){
         return true;
     }//saveAs
 },//=================================================================================
+    //Используется в конструкторе без параметров GrRecords
 lsf(0,"Файл списка всех файлов проекта",false) {
     public boolean save(){
         assert prnq("ext:TST>saveAs");
@@ -42,27 +40,27 @@ lsf(0,"Файл списка всех файлов проекта",false) {
         return true;
     }//saveAs
     //занесение в справочник файлов------------------------------------------------------
-    @Override//--------занесение в справочник файлов---------------------------------
-    public boolean include(Path path, EiPath dir){//беру путь и сканирую его в поисках файлов
-        if (!Files.exists(path)){//проверяю на существование папки
-            prnq("\tError directory is NOT >"+path);return true;}
-        boolean b;
-//        try (DirectoryStream<Path> files = Files.newDirectoryStream(path, BgFile.getGlob())){
-//            for (Path entry : files) {//просматриваю файлы в указанной папке
-////                assert prnq("30 >"+entry+"  ="+lsFile.size());
-//                if(Files.exists(entry) && Files.isRegularFile(entry)){//он существует и он файл
-//                    b=false;
-//                    for (EiFile e:lsFile) {//добавляю в список файлов
-//                        //assert prnq("FileType 32 include >"+e.getTitul()+"<>"+entry);
-//                        if (e.getTitul().equals(entry.toString())) continue;//есть такой
-//                        b=true;
-//                    }//for lsFile
-//                    if (b)  lsFile.add(new EiFile(entry.toString(),dir));//добавляю элемент
-//                }//if exists
-//            }//for files
-//        } catch (IOException x) { System.err.println(">"+x); return true; }
-        return true;
-    }//includt All
+//    @Override//--------занесение в справочник файлов---------------------------------
+//    public boolean include(Path path, EiPath dir){//беру путь и сканирую его в поисках файлов
+//        if (!Files.exists(path)){//проверяю на существование папки
+//            prnq("\tError directory is NOT >"+path);return true;}
+//        boolean b;
+////        try (DirectoryStream<Path> files = Files.newDirectoryStream(path, BgFile.getGlob())){
+////            for (Path entry : files) {//просматриваю файлы в указанной папке
+//////                assert prnq("30 >"+entry+"  ="+lsFile.size());
+////                if(Files.exists(entry) && Files.isRegularFile(entry)){//он существует и он файл
+////                    b=false;
+////                    for (EiFile e:lsFile) {//добавляю в список файлов
+////                        //assert prnq("FileType 32 include >"+e.getTitul()+"<>"+entry);
+////                        if (e.getTitul().equals(entry.toString())) continue;//есть такой
+////                        b=true;
+////                    }//for lsFile
+////                    if (b)  lsFile.add(new EiFile(entry.toString(),dir));//добавляю элемент
+////                }//if exists
+////            }//for files
+////        } catch (IOException x) { System.err.println(">"+x); return true; }
+//        return true;
+//    }//includt All
 },//==============================================================================
 ini(12,"Файл инициализации проекта",false) {
 }, //список проектов
@@ -116,24 +114,33 @@ public void     setPach(String pach) { this.pach = pach; }
  * создаю резервную копию файла методом переименования и удаления предыдущий версии
  * вызывается BgFile.saveLocalDataSources(boolean isSave)
  * @return    */
-public boolean backUp(){
-    assert pach!=null: "! ext> backUp: pach = null !";
-    try { if (!Files.exists(Paths.get(pach))) return true;//нет файла
-            Files.move(Paths.get(pach),
-                    Paths.get(pach.substring(0,pach.length()-1).concat("$")),
-            StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) { e.printStackTrace(); return false;}
-    return true;
-}//backUp
-//методы для перегрузки -----------------------------------------------------------
-
-//занесение в справочник файлов---возвращает истина, если не тот тип файла-------
-public boolean include(Path path, EiPath dir){
-    assert prnq("Absent Metod");return false;}//----------------------------------
+//public boolean backUp(){
+//    assert pach!=null: "! ext> backUp: pach = null !";
+//    try { if (!Files.exists(Paths.get(pach))) return true;//нет файла
+//            Files.move(Paths.get(pach),
+//                    Paths.get(pach.substring(0,pach.length()-1).concat("$")),
+//            StandardCopyOption.REPLACE_EXISTING);
+//    } catch (IOException e) { e.printStackTrace(); return false;}
+//    return true;
+//}//backUp
+////методы для перегрузки -----------------------------------------------------------
+//
+////занесение в справочник файлов---возвращает истина, если не тот тип файла-------
+//public boolean include(Path path, EiPath dir){
+//    assert prnq("Absent Metod");return false;}//----------------------------------
 
 public  boolean save(){ return save(pach); }
 //saveAs----------------------------------------------------------------------------
-public  boolean save(String jpath){
+
+    /**
+     * Запись данных в файл выполняется через вызов GrRecords.ХХХХ.writPL(bw)
+     * где определяется тип(класс) данных и ссылка коллекцию элементов с
+     * преобразованием в поток. В классе должен быть переопределен метод
+     * toString() под запись в файл элемента.
+     * @param jpath имя и путь к файлу назначения
+     * @return истина если запись произошла успешно
+     */
+    public  boolean save(String jpath){
     assert prnt("\nFileType:"+name()+">save (");
     assert jpath!=null:"--FileType>save pach==null";
     //создаю резервную копию
@@ -145,13 +152,15 @@ public  boolean save(String jpath){
     assert prnt("& ");
     //записываю файл
     try(BufferedWriter bw = new BufferedWriter(new FileWriter(jpath)))
-    {   bw.write(this.getDs()+"\n" );//назначение файла
+    {   bw.write(this.ds+"\n" );//назначение файла
         GrRecords.TITUL.writPL(bw);//описание данного файла
-        for(GrRecords recrd: GrRecords.values()) if(recrd.getTypFile().equals(name()))
-        {recrd.writPL(bw);
+        for(GrRecords recrd: GrRecords.values()) if(recrd.getTypFile().equals(name())) {
             assert prnt("`"+recrd.name());
+            recrd.writPL(bw);
         }//for-if
         GrRecords.ENDFL.writPL(bw);//установка метки завершение записи
+//        bw.newLine();
+//        bw.flush();
         prnq(" ) File: "+ jpath+" is UpLoad");
     }catch(IOException ex){System.out.println(ex.getMessage());return false;}//catch
     return true;
@@ -190,63 +199,4 @@ public boolean loadLoc(){
 
     return true;
 }//loadLoc
-
-/**
- * Тестовое чтение файлов для дальнейшего принятия решений
- * @param pach путь и имя файла
- * @return число как результат возможности чтения файла
- * отрицательное если не прочитали или относительное время изменения
- */
-//static String tmpDescr=null;
-//static String tmpTitul=null;
-//public static int loadScan(String pach) {
-////    assert prnq("$ FileType loadScan $");
-//    assert pach != null : "! FileType.loadScan: pach = null !";
-//    Path path = Paths.get(pach);
-//    if (Files.isDirectory(path)) return -5;//это не файл
-//    if (Files.isSymbolicLink(path)) return -4;//это ссылка на файл
-//    if (!Files.exists(path)) {
-//        if (Files.notExists(path)) {//файл не существует - создаю
-//            assert prnq(" File {" + path + "} Not exist ");
-//            return -3; //не существует
-//        } else return -2; //не доступен для чтения
-//    }//if exist
-//    try {
-//        if (Files.size(path) < 13) {//проверяю длинну файла
-//            prnq("ERROR file: " + path + " is litl < 13");
-//            return -1;
-//        }
-//    } catch (IOException e) {
-//        e.printStackTrace();
-//        return -7;
-//    }
-//    long z = 1;
-//    tmpDescr = null;
-//    tmpTitul = null;
-//    AtomicBoolean q = new AtomicBoolean(false);
-//    try {
-//        z = (Files.getLastModifiedTime(path).toMillis()) / 1000 - DateTim.begSecund;
-//        long finalZ = z;
-//        Stream.of(Files.readAllLines(path, StandardCharsets.UTF_8)).forEach(readsrt -> {
-////            assert prnq("Load string "+readsrt.size()+" from "+path);
-//            for (String str : readsrt) {//читаю последовательно строки файла
-//                if (str.length() < 5) {
-//                    assert prnq("Error length");
-//                    continue;
-//                }
-//                if (str.startsWith(GrRecords.ENDFL.name()) ||
-//                        (tmpDescr != null && tmpTitul != null)) {
-////                    assert prnq("@  RiProdject.integrate "+pach);
-//                    q.set(RiProdject.integrTitul((int) finalZ, tmpTitul, tmpDescr, pach));//добавляю элемент из временных переменных
-//                    break;
-//                }
-//                if (str.startsWith(GrRecords.DESCR.name())) tmpDescr = str;
-//                else if (str.startsWith(GrRecords.TITUL.name())) tmpTitul = str;
-//            }//for readsrt
-//        });
-//    } catch (IOException e) { e.printStackTrace(); return -6;}
-//    if (q.get()) return (int) z;
-//        return 0;
-//   //относительное время последней модификации файла
-//}//loadScan
 }//enum FileType=====================================================================

@@ -2,7 +2,7 @@ package qwr.model.Base;
 
 import java.time.Instant;
 
-import static qwr.util.BgFile.prnq;
+import static qwr.util.CollectUtl.prnq;
 
 /**
  * Статический класс для формирования ключа и извлечения его составляющих

@@ -16,6 +16,7 @@
 package qwr.model.SharSystem;
 
 
+import qwr.model.Base.RiPath;
 import qwr.util.DateTim;
 import qwr.util.PrHelp;
 
@@ -212,9 +213,10 @@ public record RiProdject(int create, int change, int order, int flag, String nam
             int xcreat = DateTim.newSeconds();//текущее время
 			//проверяю существование такого файла            
             if (Files.notExists(Path.of(x))) {//файл не существует - создаю
-                assert prnq(" File {"+x+"} Create ");
-                if (jPresent<0) {//3.1) Если файл не существует и новый, то создаю и добавляю;
-                    if(FileType.cfg.save(x)){//истина если файл создался нормально
+                boolean q = FileType.cfg.save(x);//cсоздаю
+                if (jPresent<0) {//3.1) Если файл не существует и новый, то добавляю;
+                    assert prnq("\n File {"+x+"} Create ");
+                    if(q){//истина если файл создался нормально
                     z.getAndIncrement();
                     list.add(new RiProdject(
                         xcreat,//int create
@@ -227,6 +229,9 @@ public record RiProdject(int create, int change, int order, int flag, String nam
                         x //String fileCfg
                     )); }//if q
                 }//if qPresent
+                else {
+                    assert prnq("\n File {"+x+"} ReCreate ");
+                }
                 //3.4) Если файл не существует и есть в списке, то ни чего не делаю;
             }//файл не существует - создаю
             else {//файл существует
@@ -411,6 +416,8 @@ public record RiProdject(int create, int change, int order, int flag, String nam
             lsfpr.add(jPtFlCfg);
         }
         //возвращаю поток имен файлов конфигурации
+        prnq("RiProdject.parsingComandString > 419: RiPath.list.add(jPtFlCfg)");
+        RiPath.list.add(new RiPath(DateTim.newSeconds(),0,jPtFlCfg));
         return lsfpr.stream().distinct();
     }//parsingComandString
 

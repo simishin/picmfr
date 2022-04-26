@@ -22,11 +22,10 @@
  * При создании проекта создается первый администратор и от него все остальное */
 package qwr.model.Base;
 
-import qwr.util.BgFile;
 import qwr.util.DateTim;
 
-import static qwr.util.BgFile.prnq;
-import static qwr.util.BgFile.sepr;
+import static qwr.util.CollectUtl.prnq;
+import static qwr.util.CollectUtl.sepr;
 
 public abstract class BaseElement {//Guid=справочник,руководство
     private static int count=0;//cчетчик для элементов по умолчанию
@@ -47,7 +46,8 @@ public abstract class BaseElement {//Guid=справочник,руководс�
         this.isusr  = isusr;        //используется в текущем проекте
         this.solvd  = solvd;         //разрешено использование
         this.chang  = chang;        //идентификатор
-        this.owner  = BgFile.getUserIdPrj();//идентификатор пользователя создавшего элемент
+     //   this.owner  = BgFile.getUserIdPrj();//идентификатор пользователя создавшего элемент
+        this.owner  = 12;
         this.key    = DateTim.newSeconds();//cек1.01.1970
     }//ElGuid
     //конструктор элемента из справочника

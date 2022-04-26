@@ -17,7 +17,6 @@
  */
 package qwr.model.SharSystem;
 
-import qwr.model.Base.EiPath;
 import qwr.model.Base.EiUser;
 /*
 import qwr.model.nexus.ECard;
@@ -104,7 +103,8 @@ DESCR( FileType.cfg) {
 PATHS( FileType.cfg){//вспомогательный - количество путей
     @Override
     public void writPL(BufferedWriter bw) {
-        assert RiPath.list.size()>0: "~GrRecords:writPL~RiProdject.list.size=null";
+//        assert RiPath.list.size()>0: "~GrRecords:writPL~RiProdject.list.size=null";
+        assert prnq("PATHS : "+RiPath.list.size());
         writPL(RiPath.list.stream(), bw);//вызов обобщенного метода в этом перечислении
 //        assert bw!=null:"-- GrRecords:writPL > BufferedWriter==null";
 //        try { bw.write(this.name()+sepr+ lpPath.size()+"\n");
@@ -119,67 +119,71 @@ PATHS( FileType.cfg){//вспомогательный - количество п�
     }//readExst
 },//PATHS
 //=============================================================================
-PATHR( FileType.cfg)   {//основной список путей с параметрами
-    @Override
-    public void writPL(BufferedWriter bw) {
-        assert bw!=null:"-- GrRecords:writPL > BufferedWriter==null";
-        if (lpPath.size()>0)
-            for(EiPath itm: lpPath ) {
-                try { bw.write(this.name()+itm.writ()+"\n"); }
-                catch(IOException ioException){ioException.printStackTrace();return;}
-            }//for
-        return;
-    }//writPL
-    @Override //---------------------------------------------------------------------
-    public boolean readRecord(String[] words,int src) {//разбор строки внеш.файла
-//        assert prnq("* "+name());
-        EiPath itm = new EiPath("");
-        if( itm.read(words)){ assert prnq("Error GrRecords:115 "+words);
-//            BgFile.setDecompositionError();//ставлю флаг остановки анализа строки
-            return false; }//строка не разобралась
-        //пополняю список
-        for (EiPath e:lpPath) if ( e.merger(itm))return false;//корректирую значение в полях
-        //добавляю элемент
-        long j=itm.getKey();
-        while (lpPath.contains(j)) j--;
-        itm.setKey(Math.toIntExact(j));
-        lpPath.add(itm);//добавляю элемент
-        return false;//условие дальнейшего анализа файла
-    }//readExst
-    /**
-     * Создание нового объекта в списке с проверкой на совпадение ключа
-     * @param obj интегрируемый в список объект
-     * @return истина, если найден одноименный объект и интеграция не возможна
-     */
-    public boolean create(Object obj) {//разбор строки внеш.файла
-//        assert prnq("*** Metod create EiPath *** ");
-        assert obj instanceof EiPath: "Object is NOT EiPath";
-        EiPath itm=(EiPath) obj;
-        for (EiPath e:lpPath) {
-//            assert prnq(">>>>>> "+e.getTitul());
-            if (e.equals(itm)) {
-            return true;}}//проверяю совпадение
-        long j=itm.getKey();
-        while (lpPath.contains(j)) j--;
-        itm.setKey(Math.toIntExact(j));
-//        while (lpPath.contains(itm.getKey())){ itm.incKey(); }//проверяю наложение ключа
-        lpPath.add(itm);//добавляю элемент
-        prnq(" > add:"+itm.getKey()+"~"+itm.getTitul());
-        return false;//
-    }//create
-},//PATHR
+//PATHR( FileType.cfg)   {//основной список путей с параметрами
+//    @Override
+//    public void writPL(BufferedWriter bw) {
+//        assert bw!=null:"-- GrRecords:writPL > BufferedWriter==null";
+//        if (lpPath.size()>0)
+//            for(EiPath itm: lpPath ) {
+//                try { bw.write(this.name()+itm.writ()+"\n"); }
+//                catch(IOException ioException){ioException.printStackTrace();return;}
+//            }//for
+//        return;
+//    }//writPL
+//    @Override //---------------------------------------------------------------------
+//    public boolean readRecord(String[] words,int src) {//разбор строки внеш.файла
+////        assert prnq("* "+name());
+//        EiPath itm = new EiPath("");
+//        if( itm.read(words)){ assert prnq("Error GrRecords:115 "+words);
+////            BgFile.setDecompositionError();//ставлю флаг остановки анализа строки
+//            return false; }//строка не разобралась
+//        //пополняю список
+//        for (EiPath e:lpPath) if ( e.merger(itm))return false;//корректирую значение в полях
+//        //добавляю элемент
+//        long j=itm.getKey();
+//        while (lpPath.contains(j)) j--;
+//        itm.setKey(Math.toIntExact(j));
+//        lpPath.add(itm);//добавляю элемент
+//        return false;//условие дальнейшего анализа файла
+//    }//readExst
+//    /**
+//     * Создание нового объекта в списке с проверкой на совпадение ключа
+//     * @param obj интегрируемый в список объект
+//     * @return истина, если найден одноименный объект и интеграция не возможна
+//     */
+//    public boolean create(Object obj) {//разбор строки внеш.файла
+////        assert prnq("*** Metod create EiPath *** ");
+//        assert obj instanceof EiPath: "Object is NOT EiPath";
+//        EiPath itm=(EiPath) obj;
+//        for (EiPath e:lpPath) {
+////            assert prnq(">>>>>> "+e.getTitul());
+//            if (e.equals(itm)) {
+//            return true;}}//проверяю совпадение
+//        long j=itm.getKey();
+//        while (lpPath.contains(j)) j--;
+//        itm.setKey(Math.toIntExact(j));
+////        while (lpPath.contains(itm.getKey())){ itm.incKey(); }//проверяю наложение ключа
+//        lpPath.add(itm);//добавляю элемент
+//        prnq(" > add:"+itm.getKey()+"~"+itm.getTitul());
+//        return false;//
+//    }//create
+//},//PATHR
 //=============================================================================
 USERS( FileType.cfg){//вспомогательный - количество пользователей
     @Override
     public void writPL(BufferedWriter bw) {
-        assert bw!=null:"-- GrRecords:writPL > BufferedWriter==null";
-        try { bw.write(this.name()+sepr+ mpUser.size()+"\n");
-        }catch(IOException ioException){ioException.printStackTrace();return;}
-        return;
+        assert prnq("USERS : "+RiUser.list.size());
+        writPL(RiUser.list.stream(), bw);
+
+//        assert bw!=null:"-- GrRecords:writPL > BufferedWriter==null";
+//        try { bw.write(this.name()+sepr+ mpUser.size()+"\n");
+//        }catch(IOException ioException){ioException.printStackTrace();return;}
+//        return;
     }//writPL
     @Override //---------------------------------------------------------------------
     public boolean readRecord(String[] words,int src) {//разбор строки внеш.файла
-//        assert prnq("* "+name());
+        int x = RiUser.integrate(words,src & 7);//задаю принадлежность к классу
+        assert prnq("RiPath.integrate="+x);
         return false;//условие дальнейшего анализа файла
     }//readExst
 },//URS
@@ -586,6 +590,13 @@ ENDFL {
     //методы
     public abstract void    writPL(BufferedWriter bw);//для переопределения
 
+    /**
+     * Вызывается из GrRecords.ХХХХХ.writPL(BufferedWriter bw)
+     * @param list список требуемого класса объекта записи
+     * @param bw буфер для записи, наследуемый при вызове
+     * @param <T> тип объекта записи, задается при вызове
+     * @return возвращает истина, если запись прошла без сбоев
+     */
     public <T> boolean writPL(Stream<T> list, BufferedWriter bw) {
         assert bw!=null:"-- GrRecords:writPL > BufferedWriter==null";
         AtomicBoolean z= new AtomicBoolean(true);
@@ -603,11 +614,11 @@ ENDFL {
      * @return истина если прекратить обработку потока строк или лож для продолжения
      */
     public abstract boolean readRecord(String[] words,int src);//распознавание записи в строке
-    public int      sizeArray(){return -1;}//количество элементов определенного класса
-    public boolean  create(Object obj) {//разбор строки внеш.файла
-        assert prnq("*** Metod create enum GrRecords is not specify *** ");
-        return false;//условие дальнейшего анализа файла
-    }//create
-    public void lackItem(){}//внесение недостающих элементов в коллекции из подчиненных
+//    public int      sizeArray(){return -1;}//количество элементов определенного класса
+//    public boolean  create(Object obj) {//разбор строки внеш.файла
+//        assert prnq("*** Metod create enum GrRecords is not specify *** ");
+//        return false;//условие дальнейшего анализа файла
+//    }//create
+//    public void lackItem(){}//внесение недостающих элементов в коллекции из подчиненных
 
 }//enum FileGroupRecords

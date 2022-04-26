@@ -7,8 +7,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-import static qwr.util.BgFile.prnq;
-import static qwr.util.BgFile.prnt;
+import static qwr.util.CollectUtl.prnq;
+import static qwr.util.CollectUtl.prnt;
 
 public class DateTim {
     public  static final long begSecund = 1610643835L;//2021-01-15T00:03точка отсчета

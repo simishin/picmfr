@@ -31,13 +31,19 @@
 package qwr.model.SharSystem;
 import qwr.model.Base.EiUser;
 import qwr.model.Base.PublStat;
+import qwr.model.Base.RiPath;
 
-import static qwr.util.BgFile.prnq;
-import static qwr.util.BgFile.sepr;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static qwr.util.CollectUtl.prnq;
+import static qwr.util.CollectUtl.sepr;
 import static qwr.util.CollectUtl.prne;
 
 public record RiUser(int key, String login, String titul, String descr,
                      int user, int pass, int change, int order) {
+    public static List<RiUser> list = new CopyOnWriteArrayList<>();
+
     public static final int sizeAr=8;//количество полей в текстовом файле данных
     public static boolean eqRi=false;//служебное поле для сравнения элементов
     private static int count;
@@ -68,11 +74,26 @@ public record RiUser(int key, String login, String titul, String descr,
         if (maxKey>=k) return maxKey+1;
         return k;
     }//genKey
+
     @Override
     public String toString() {//создание строки для записи в текстовый файл
         return sepr+ key +sepr+ user +sepr+ login +sepr+ titul +sepr+ descr
                 +sepr+ pass +sepr+ pass +sepr + change +sepr;
     }//toString-------------------------------------------------------------------------
+    /** интеграция данных в коллекцию вызывается из GrRecords.*.readRecord
+     * @param words поток с исходными данными из массива слов строки ввода
+     * @param src тип источника элемента
+     * 0 - из документов и по умолчанию
+     * 1 - файлы и папки локальной базы
+     * 2 - создан или получен из командной строки
+     * 3 - файлы и папки внешних данных не синхронизируемых (данные берутся но не проверяются)
+     * 4,5,6,7. - файлы и папки внешних данных подлежащих синхронизации изменения данных
+     * @return 0 без изменений, 1 переписаны поля, 2 заменяем, 3 добавлен, 4 первый,
+     * -1 пропускаю элемент, -2 игнорировать по несответствию, -3 запрещенное состояние
+     */
+    public static int integrate(String[] words, int src) {
+        return 0;
+    }//integrate
 
 
     protected RiUser readRi(String[] words, int sizeAr){
