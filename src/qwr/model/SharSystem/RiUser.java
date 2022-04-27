@@ -33,18 +33,17 @@ import qwr.model.Base.EiUser;
 import qwr.model.Base.PublStat;
 import qwr.model.Base.RiPath;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static qwr.util.CollectUtl.prnq;
-import static qwr.util.CollectUtl.sepr;
-import static qwr.util.CollectUtl.prne;
+import static qwr.util.CollectUtl.*;
 
 public record RiUser(int key, String login, String titul, String descr,
                      int user, int pass, int change, int order) {
     public static List<RiUser> list = new CopyOnWriteArrayList<>();
 
-    public static final int sizeAr=8;//количество полей в текстовом файле данных
+    public static final int sizeAr=9;//количество полей в текстовом файле данных
     public static boolean eqRi=false;//служебное поле для сравнения элементов
     private static int count;
     private static int maxKey;
@@ -92,6 +91,22 @@ public record RiUser(int key, String login, String titul, String descr,
      * -1 пропускаю элемент, -2 игнорировать по несответствию, -3 запрещенное состояние
      */
     public static int integrate(String[] words, int src) {
+        if (words.length < sizeAr) {
+            for (int i = 0; i < words.length; i++) prnt("+  "+i+"-"+words[i]);prnq("~"+words.length);
+            return -2; //недостаточное количество элементов
+        }
+        RiUser z;
+        try { z= new RiUser(Integer.parseInt(words[1]),Integer.parseInt(words[2]), words[3],
+                words[4], words[5], Integer.parseInt(words[6]), Integer.parseInt(words[7]));
+        }
+        catch (Exception ex) {ex.printStackTrace();return -2;}
+        if (list.size()<1) { list.add(z); return 4;}
+        boolean q=true;
+        //просматриваю на наличие
+        for (RiUser x : list) if (x.login.equals(z.login) && x.key==z.key) {q=false; break; }
+        //если не найден, то добавляю
+        if (q) { list.add(z); return 3; }
+//****************************************************************************************
         return 0;
     }//integrate
 
@@ -148,8 +163,8 @@ public record RiUser(int key, String login, String titul, String descr,
         return key == riUser.key && login.equals(riUser.login);
     }//equals
 
-    @Override
-    public int hashCode() { return key; }
+//    @Override
+//    public int hashCode() { return key; }
 //    public int hashCode() { return Objects.hash(key, login); }
 
     public int key() { return key; }

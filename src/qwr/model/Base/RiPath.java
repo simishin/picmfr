@@ -44,7 +44,7 @@ import static qwr.util.CollectUtl.*;
 
 public record RiPath(int change, int parameter, String filePath) {
     public static List<RiPath> list = new CopyOnWriteArrayList<>();
-
+    public static final int sizeAr=4;//количество полей в текстовом файле данных
     @Override
     public String toString() {//создание строки для записи в текстовый файл
         return sepr+ change + sepr+ parameter + sepr+ filePath + sepr;
@@ -61,7 +61,7 @@ public record RiPath(int change, int parameter, String filePath) {
      * -1 пропускаю элемент, -2 игнорировать по несответствию, -3 запрещенное состояние
      */
     public static int integrate(String[] words, int src){
-        if (words.length<4) {
+        if (words.length < sizeAr) {
             for (int i = 0; i < words.length; i++) prnt("+  "+i+"-"+words[i]);prnq("~"+words.length);
             return -2; //недостаточное количество элементов
         }
