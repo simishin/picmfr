@@ -18,7 +18,7 @@ public class MainTestClass {
         prnq("int/2=2147483647");
         prnq("int  ="+ Math.toIntExact(now().getEpochSecond()));
         prnq("Время создания int  ="+ DateTim.newSeconds()+
-                "\n\t\t"+CollectUtl.prnBolLong(DateTim.newSeconds()));
+                "\n\t\t"+CollectUtl.prnBinLong(DateTim.newSeconds()));
         //long x=2147483647L; prnq(""+ CollectUtl.prnBolLong(x));
         int user=2147483647;
         user/=8;
@@ -35,7 +35,7 @@ public class MainTestClass {
         //key |=(DateTim.newSeconds()& 0x3FFFFFF)<<12;
         prnq("\t\t"+
                 ".rrrr.rrrr.ssss.uuuu.uuuu.uuuu.uuUU.tttt&tttt.tttt.tttt.tttt.tttt.tttt.TTTT.TTTT");
-        prnq("\t"+ key+ "\n\t\t"+CollectUtl.prnBolLong(key));
+        prnq("\t"+ key+ "\n\t\t"+CollectUtl.prnBinLong(key));
 
         prnq("Time "+timer+"\tUser "+user+"\txStc "+xstruc);
         TestClass x = new TestClass(timer,"test",xstruc,user);

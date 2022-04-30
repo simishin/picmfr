@@ -37,7 +37,7 @@ public class CollectUtl {
      * @param x число для перобразования в строку
      * @return бинарное представление Х
      */
-    public static String prnBolLong(long x){
+    public static String prnBinLong(long x){
         char[] y=new char[80];
         for (int i = y.length-1; i >= 0; i--) {
             if (i==40){         y[i]='"'; continue; }
@@ -50,4 +50,5 @@ public class CollectUtl {
         return new String(y);
     }//prnBolLong
 
-}//class CollectUtl
+}//class CollectUtl==================================================
+

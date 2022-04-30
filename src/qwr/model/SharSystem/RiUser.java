@@ -31,7 +31,10 @@
 package qwr.model.SharSystem;
 import qwr.model.Base.EiUser;
 import qwr.model.Base.PublStat;
+import qwr.model.Base.Records;
 import qwr.model.Base.RiPath;
+import qwr.util.CollectUtl;
+import qwr.util.QException;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -40,8 +43,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static qwr.util.CollectUtl.*;
 
 public record RiUser(int key, String login, String titul, String descr,
-                     int user, int pass, int change, int order) {
-    public static List<RiUser> list = new CopyOnWriteArrayList<>();
+                     int user, int pass, int change, int order) implements Records {
+    public static List<Records> list = new CopyOnWriteArrayList<>();
 
     public static final int sizeAr=9;//количество полей в текстовом файле данных
     public static boolean eqRi=false;//служебное поле для сравнения элементов
@@ -69,10 +72,20 @@ public record RiUser(int key, String login, String titul, String descr,
     }
 
     protected static int genKey(){
+//        PublStat.keyRecord(list,123);//---------------------------------------------
+        long z = Records.makingKey(RiUser.list,123);//вызов статистического метода интерфейса
         int k=(PublStat.dupDay()& 0x3FFF)<<2;
         if (maxKey>=k) return maxKey+1;
         return k;
     }//genKey
+
+    @Override
+    public int hashCode() { return  key & 0xFFFFFFFF; }
+
+    @Override //из интерфейса
+    public long getKey() {
+        return key;
+    }
 
     @Override
     public String toString() {//создание строки для записи в текстовый файл
@@ -90,7 +103,7 @@ public record RiUser(int key, String login, String titul, String descr,
      * @return 0 без изменений, 1 переписаны поля, 2 заменяем, 3 добавлен, 4 первый,
      * -1 пропускаю элемент, -2 игнорировать по несответствию, -3 запрещенное состояние
      */
-    public static int integrate(String[] words, int src) {
+    public static int integrate(String[] words, int src)  {
         if (words.length < sizeAr) {
             for (int i = 0; i < words.length; i++) prnt("+  "+i+"-"+words[i]);prnq("~"+words.length);
             return -2; //недостаточное количество элементов
@@ -101,11 +114,30 @@ public record RiUser(int key, String login, String titul, String descr,
         }
         catch (Exception ex) {ex.printStackTrace();return -2;}
         if (list.size()<1) { list.add(z); return 4;}
-        boolean q=true;
-        //просматриваю на наличие
-        for (RiUser x : list) if (x.login.equals(z.login) && x.key==z.key) {q=false; break; }
+        boolean jPresent=true;
+        //просматриваю на наличие по key
+        for (Records x : list) {
+            RiUser y = (RiUser) x;
+            if (y.key == z.key)
+                if (y.login.equals(z.login)) {
+                    jPresent = false;
+                    break;
+                }
+                else  return 0; //частичное совпадение ключей - игнорирую дополнение
+        }
         //если не найден, то добавляю
-        if (q) { list.add(z); return 3; }
+        if (jPresent) { list.add(z); return 3; }//добавлен  так как отсутствует
+        /* выполняю слияние исходя из новизны элемента и его источника
+        приоритет остается за более новыми данными, за исключением нулевых значений.
+        Для источников одного уровня. Для источников разного уровня:
+        низший - (3) - файлы и папки внешних данных не синхронизируемых = просто дописываю
+        (0) - - из документов и по умолчанию
+        (1)- файлы и папки локальной базы, если наложение, то корректирую локальные данные
+        средний (4,5,6,7) - файлы и папки внешних данных подлежащих синхронизации
+        высший () - данные из глобальных справочников
+         */
+
+
 //****************************************************************************************
         return 0;
     }//integrate
