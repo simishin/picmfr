@@ -43,11 +43,11 @@ public class MainTestClass {
 
         PublStat.setKeyUser(6);
         RiUser j = new RiUser("log","tit","des", 8);
-        j.incCount();
+//        j.incCount();
         RiUser j1 = new RiUser("log","tit","des", 8);
         RiUser j2 = new RiUser("log","tit","des", 8);
 
-        prnq(" "+j.Count()+"\t "+j.key()+"\t "+j1.key()+"\t "+j2.key());
+//        prnq(" "+j.Count()+"\t "+j.key()+"\t "+j1.key()+"\t "+j2.key());
         prnq("% "+ (PublStat.dupDay()<<2));
 
         ArrayList<RiUser> riUsers = new ArrayList<>();

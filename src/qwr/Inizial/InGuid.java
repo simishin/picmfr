@@ -31,7 +31,7 @@ public class InGuid {
     //util.BgFile.ploadDataExternalSources()
     //данные из lsFile сохраняются и восстанавливаются из файла типа "lsf" FileType
 //    public static ArrayList<EiFile> lsFile=new ArrayList<>(950);//файлы
-    public static Map<Long,EiUser>  mpUser=new HashMap<Long,EiUser>(32);
+//    public static Map<Long,EiUser>  mpUser=new HashMap<Long,EiUser>(32);
 //    public static ArrayList<EiPath> lpPath=new ArrayList<>();//спиок путей
 /*    public static ArrayList<EiCorrect> lsCorr=new ArrayList<>();//список транзакций
     //справочники проекта
