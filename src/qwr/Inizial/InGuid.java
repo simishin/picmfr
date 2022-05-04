@@ -5,12 +5,8 @@
 package qwr.Inizial;
 
 //import qwr.footing.InfcElm;
-import qwr.model.Base.EiUser;
 //import qwr.model.reference.*;
 //import qwr.reports.Elcol;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static qwr.util.CollectUtl.prnq;
 

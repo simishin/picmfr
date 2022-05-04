@@ -1,13 +1,10 @@
 /** Класс создан 270322 взамен классов qwr.model.Base.EiUser extends BaseElement
  * и более раннего класса qwr.model.SharSystem.usrItm
- * код элемента класса используется при формировании кода записи
- * ".rrrr.rrrr.ssss.uuuu.uuuu.uuuu.uuUU.tttt&tttt.tttt.tttt.tttt.tttt.tttt.TTTT.TTTT"
- * где r-зарезервированы, s = xstruc <= 15 определяет принадлежность к структуре данных
- * u-часть кода пользователя полученная их даты создания пользователя 14 бит= 16383 дня = 45лет
- * U-часть кода пользователя в виде счетчика созданных пользователей в один день,
- * t-часть кода записи полученная из количества секунд, прошедших с даты
- * T-часть кода записи в виде счетчика записей созданных в одно время
- * точка отсчета для самой ранней даты является 2021-01-15T00:03 = 1610643835L
+ * ключ элемента формируется interface Records makingKeyUser на основе ключа текущего
+ * пользователя и времени создания.
+ * Первый пользователь создается вместе с проектом и всегда имеет нулевой код.
+ *
+ *
  *
  * Класс описывающий пользователей проектов
  * имеет логин, полное имя, дополнительную информацию о пользователе,
@@ -40,7 +37,7 @@ import static qwr.util.CollectUtl.*;
 public record RiUser(int key, String login, String titul, String descr,
                      int user, int pass, int change, int order) implements Records {
     public static List<Records> list = new CopyOnWriteArrayList<>();
-
+    private static          String userPrj;    //имя текущего пользователя
     public static final int sizeAr=9;//количество полей в текстовом файле данных
     public static boolean eqRi=false;//служебное поле для сравнения элементов
     private static int count;
@@ -65,6 +62,10 @@ public record RiUser(int key, String login, String titul, String descr,
     public RiUser(RiUser x, int i) { this(x.key, x.login, x.titul, x.descr,
             PublStat.getKeyUser(), x.pass & 0xFFFFFFF8 | i, PublStat.changeTime(), count++);
     }
+
+    public static String getUserPrj() { return userPrj; }
+    public static void setUserPrj(String userPrj) { RiUser.userPrj = userPrj; }
+    public static void prnUserPrj(){ prnq("UserPrj: "+userPrj+"  Users: "+list.size()); }
 
     protected static int genKey(){
 //        PublStat.keyRecord(list,123);//---------------------------------------------
@@ -201,6 +202,47 @@ public record RiUser(int key, String login, String titul, String descr,
 //    public static void setCount(int count) { RiUser.count = count; }
 //    public static void incCount(){count++;}
 //    @Override//----------------------------------------------------------------------
+
+    /**
+     * Определяю нулевого и первоначальных пользователей
+     * Если список пуст, то создаю пользователя, иначе задаю
+     * пользователя по умолчанию, если он не указан в командной строке.
+     * Если пользователь указан в командной строке, то проверяю его
+     * существование и при отсутствии добавляю его в список.
+     */
+    public static RiUser definePrimaryUsers(){
+        assert prnq("$ RiUser.definePrimaryUsers $");
+//        boolean jPresent=true;
+        RiUser z = null;
+        int y;
+        if (userPrj.isBlank()){//Указание на пользователя в командной строке нет
+            if (list.isEmpty()){//список пустой
+                y=(RiProdject.curCreat& 0x3FFFC000)<<2;//нулевой пользователь
+                z=new RiUser(y,RiProdject.curName,RiProdject.curTitul,"",0,0,0,count++);
+                list.add( z);
+                assert prnq("RiUser.definePrimaryUsers > create user");
+            } else {//в списке есть пользователи
+                z = (RiUser) list.get(0);
+                assert prnq("RiUser.definePrimaryUsers > set current user");
+            }
+        } else { //Пользователь задан в командной строке
+            if (! list.isEmpty()) for (Records x:list ) //просматриваю список на наличие
+                if (((RiUser) x).login.equals(userPrj)) {
+//                    jPresent=false;
+                    z=(RiUser)x;
+                    break;
+                }
+
+            if (z==null){//элемент не найден - добавляю
+                y=Records.makingKeyUser(list,(RiProdject.curCreat& 0x3FFFC000)>>14);
+                z=new RiUser(y,userPrj,userPrj,"",0,0,0,count++);
+                list.add( z);
+                assert prnq("RiUser.definePrimaryUsers > addition user");
+            }
+        }//else
+        return z;
+    }//definePrimaryUsers
+
     public String print(){ return " \tc"+this.order +" \t( "+this.key+" ) \t"+(this.pass & 7)
             +"p\t"+"\t"+this.user+"u\t"+this.change+this.login +"\t"+this.titul; }
 }//record RiUser

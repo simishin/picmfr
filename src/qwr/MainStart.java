@@ -2,6 +2,7 @@ package qwr;
 
 import qwr.model.SharSystem.FileType;
 import qwr.model.SharSystem.RiProdject;
+import qwr.model.SharSystem.RiUser;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -49,7 +50,8 @@ public class MainStart {
         3.6.2) Если основные данные пустые в одном из файлов, то использую данные другого;
         3.6.3) Если основные данные разные, то использую более свежую информацию.
         4) загружаю файл текущей конфигурации в полном объеме
-        5) сохраняю файл инициализации с указанием текущего проекта в шапке
+        5) Определяю нулевого и первоначальных пользователей
+        6) сохраняю файл инициализации с указанием текущего проекта в шапке
          */
 
         FileType.ini.definePach(RiProdject.getjPtFlIni());
@@ -66,10 +68,13 @@ public class MainStart {
         assert prnq("Добавлено проектов к списку: "+za);
         RiProdject.printList("После дописанния в общий список проектов из командной строки");
         assert RiProdject.list.size()>0: "~GrRecords:writPL~RiProdject.list.size=null";
+        RiUser.prnUserPrj();//просматриваю наличие пользователей
         //Загрузка текущего проекта
         assert prnq("-(4)---------------");
         RiProdject.loadCurProdject();
         assert prnq("-(5)---------------");
+        RiUser.definePrimaryUsers(); //Определяю нулевого и первоначальных пользователей
+        assert prnq("-(6)---------------");
         //сохранение списка проектов
         FileType.ini.save();
 

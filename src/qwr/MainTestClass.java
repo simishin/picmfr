@@ -1,7 +1,6 @@
 package qwr;
 
 import qwr.model.Base.PublStat;
-import qwr.model.Base.TestClass;
 import qwr.model.SharSystem.RiUser;
 import qwr.util.CollectUtl;
 import qwr.util.DateTim;
@@ -38,8 +37,6 @@ public class MainTestClass {
         prnq("\t"+ key+ "\n\t\t"+CollectUtl.prnBinLong(key));
 
         prnq("Time "+timer+"\tUser "+user+"\txStc "+xstruc);
-        TestClass x = new TestClass(timer,"test",xstruc,user);
-        prnq("Time "+x.putTime()+"\tUser "+x.putUser()+"\txStc "+x.putxStc());
 
         PublStat.setKeyUser(6);
         RiUser j = new RiUser("log","tit","des", 8);

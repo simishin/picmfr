@@ -17,15 +17,14 @@
  */
 package qwr.model.SharSystem;
 
-import qwr.model.Base.EiUser;
 import qwr.model.Base.RiPath;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import static qwr.Inizial.InGuid.*;
 import static qwr.util.CollectUtl.prnq;
 import static qwr.util.CollectUtl.sepr;
 
@@ -457,18 +456,18 @@ ENDFL {
     }//readExst
 };//END
     //==============================================================================
-    private int         iadd;//количество добавленных элементов в список для сохранения
+    private AtomicInteger iadd;//количество добавленных элементов в список для сохранения
     private final FileType    typfl;//в каком типе файла хранится
     public static final int   lengName = 5;//длинна маркера с разделителем
     public  FileType    getTypfl(){return typfl;}
     public  String      getTypFile(){return typfl.toString();}
-    public  void        shift(){iadd++;}
-    public  void        clrIadd(){iadd=0;}
-    public  int         getIadd() { return iadd; }
+    public  int         shift(){return iadd.incrementAndGet();}
+    public  void        clrIadd(){iadd.set(0);}
+    public  int         getIadd() { return iadd.get(); }
 
     //конструктор
-    GrRecords(FileType t){this.typfl =t; iadd=0;}
-    GrRecords()          {this.typfl =FileType.lsf; iadd=0;}
+    GrRecords(FileType t){this.typfl =t; iadd.set(0);}
+    GrRecords()          {this.typfl =FileType.lsf; iadd.set(0);}
     //методы
     public abstract void    writPL(BufferedWriter bw);//для переопределения
 

@@ -40,7 +40,7 @@ public record RiProdject(int create, int change, int order, int flag, String nam
                          String titul, String descr, String fileCfg) {
     //----var------------------------------------------------------
     public  static          ArrayList<RiProdject> list = new ArrayList<>();//список конфигурации
-    private static          String userPrj;    //имя пользователя
+//    private static          String userPrj;    //имя пользователя
     private static          String jPtFlIni =null;    //путь и имя файла инициализации
     private static          String jPtFlCfg =null;    //путь и имя файла конфигурации
     private static boolean  qExFlIni =false;    //файл инициализации существует
@@ -368,7 +368,8 @@ public record RiProdject(int create, int change, int order, int flag, String nam
                         String y = s.substring(d + 1);
                         if (y.length()>0){
                             assert prnq("new user: "+y);
-                            userPrj=y;
+//                            userPrj=y;
+                            RiUser.setUserPrj(y);
                         }
                         else System.out.println("No detect user name ");
                     }//if d>=0
