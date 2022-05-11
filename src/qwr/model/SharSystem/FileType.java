@@ -189,8 +189,9 @@ public boolean loadLoc(){
                 if (str.length()<5) {assert prnq("Error length");continue;}
                 String[] words =str.split(sepr);//создаю массив значений
                 try { GrRecords.valueOf(words[0]);//если не существует значение
-                }catch(IllegalArgumentException e){
-//                    assert prnq("Not define Word {"+words[0]+"}");
+//                }catch(IllegalArgumentException e){
+                }catch(Exception e){
+                    assert prnq("Not define Word {"+words[0]+"}");
                     continue;}
                 if(GrRecords.valueOf(words[0]).readRecord(words,ordinal()*8+1)) break;
             }//for readsrt

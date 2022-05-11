@@ -37,7 +37,7 @@ import static qwr.util.CollectUtl.*;
 public record RiUser(int key, String login, String titul, String descr,
                      int user, int pass, int change, int order) implements Records {
     public static List<Records> list = new CopyOnWriteArrayList<>();
-    private static          String userPrj;    //имя текущего пользователя
+    private static          String userPrj=null;    //имя текущего пользователя
     public static final int sizeAr=9;//количество полей в текстовом файле данных
     public static boolean eqRi=false;//служебное поле для сравнения элементов
     private static int count;
@@ -215,7 +215,7 @@ public record RiUser(int key, String login, String titul, String descr,
 //        boolean jPresent=true;
         RiUser z = null;
         int y;
-        if (userPrj.isBlank()){//Указание на пользователя в командной строке нет
+        if (userPrj==null){//Указание на пользователя в командной строке нет
             if (list.isEmpty()){//список пустой
                 y=(RiProdject.curCreat& 0x3FFFC000)<<2;//нулевой пользователь
                 z=new RiUser(y,RiProdject.curName,RiProdject.curTitul,"",0,0,0,count++);
