@@ -11,6 +11,7 @@ package qwr.model.SharSystem;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static qwr.util.CollectUtl.*;
@@ -197,7 +198,31 @@ public boolean loadLoc(){
             }//for readsrt
         } );
     }catch(IOException e){e.printStackTrace();}
-
     return true;
 }//loadLoc
+
+    /**
+     * Чтение файла внешних данных. Вызывается из ReadExtDbf.scanExtDbf
+     * Проверка доступности файла выполнена в вызывающем методе.
+     * @param path ссылка на поток читаемого файла, создана в вызывающем методе
+     * @return истина, если файл изменился
+     */
+    public boolean loadExtDbf(Path path) {
+        AtomicBoolean change = new AtomicBoolean(false);
+        try {
+            Stream.of (Files.readAllLines(path, StandardCharsets.UTF_8)).forEach(readsrt -> {
+                assert prnq("Load string "+readsrt.size()+" from "+path);
+                for (String str: readsrt){//читаю последовательно строки файла
+                    if (str.length()<5) {assert prnq("Error length");continue;}
+                    String[] words =str.split(sepr);//создаю массив значений
+                    //здесь возможно проверить на конец и тогда break, а в readRecord возвращать
+                    // флаг изменений
+                    try { if (GrRecords.valueOf(words[0]).endLoad()) break; }//если не существует значение
+                    catch(Exception e){ assert prnq("Not define Word {"+words[0]+"}"); continue;}
+                    if(GrRecords.valueOf(words[0]).readRecordExt(words,ordinal()*8+1)) change.set(true);;
+                }//for readsrt
+            } );
+        }catch(IOException e){e.printStackTrace();}
+        return change.get();
+    }//loadExtDbf
 }//enum FileType=====================================================================

@@ -16,13 +16,28 @@ package qwr.model.Base;
  * тогда 3FFF.FFFF = 1073741823 секунд = 34 года цикл повторения
  * 0xFFFF = 65536c = 18.2 часа
  * int = 4 байт = 0xFF FF FF FF
+ * Обязательные поля для любой записи:
+ * 1) key или create - ключ записи с зашитым в него кодом создателя и временем создания
+ * 2) change - ключ записи в замен которой создана данная запись
+ * 3) order - счетчик записей и/или положение записи в списке (сохраняется)
  */
 
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static qwr.util.CollectUtl.prnq;
 
 public interface Records {
-	long begSecund = 1610643835L;//2021-01-15T00:03 точка отсчета
+	List<Records> quNewExtElement = new CopyOnWriteArrayList<>();
+	List<Records> quOldExtElement = new CopyOnWriteArrayList<>();
+
+	public static Records creatExtDbf(String[] words, int i) {
+		assert prnq("$ Records.creatExtDbf NOT REALISE $");
+		return null;
+	}
+
+	long begSecund = 1610643835L;//2021-01-15T00:03 точка отсчета (public static final)
 	long getKey(); //ключ записи для метода генерации ключа makingKey
 	/**
 	 * Поиск свободного кода для использования его в качестве ключа новой записи

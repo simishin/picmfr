@@ -2,9 +2,11 @@ package qwr;
 
 import qwr.model.SharSystem.FileType;
 import qwr.model.SharSystem.RiProdject;
+import qwr.model.SharSystem.RiUser;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static qwr.util.CollectUtl.prnq;
@@ -27,5 +29,15 @@ public class MainTread {
 		RiProdject.curCreat=456789;  //время создания текущего проекта
 		FileType.ini.definePach(RiProdject.getjPtFlIni());
 		assert prnq("-(2)---------------");
+		// проверяю дописываю в список проекты, полученные из командной строки.
+		int za = RiProdject.addCfgFromComStrR(Arrays.stream(filesg));
+		assert prnq("Добавлено проектов к списку: "+za);
+		RiProdject.printList("После дописанния в общий список проектов из командной строки");
+		RiUser.prnUserPrj();//наличие пользователей
+		assert prnq("-(4)---------------");//Загрузка текущего проекта
+		RiProdject.loadCurProdject();
+		assert prnq("-(5)---------------");
+
+		prnq("--End program MainTread normal--");
 	}//main
 }//class MainTread

@@ -17,6 +17,7 @@
  */
 package qwr.model.SharSystem;
 
+import qwr.model.Base.Records;
 import qwr.model.Base.RiPath;
 
 import java.io.BufferedWriter;
@@ -116,6 +117,24 @@ USERS( FileType.cfg){//вспомогательный - количество п�
         assert prnq("RiUser.integrate="+x);
         return false;//условие дальнейшего анализа файла
     }//readExst
+    @Override //---------------------------------------------------------------------
+    public boolean readRecordExt(String[] words,int src) {//разбор строки внеш.файла
+        return GrRecords.readRecordExtPubl(RiUser.creatExtDbf(words,src & 7));
+//        Records y = RiUser.creatExtDbf(words,src & 7);
+//        if (y == null) return false;
+//        for (Records j: Records.quNewExtElement) if (j.equals(y)){//проверяю новый список
+//            assert prnq("RiUser.readRecordExt = in quNewExtElement");
+//            return false;
+//        }
+//        for (Records j: Records.quOldExtElement) if (j.equals(y)){//проверяю старый список
+//            assert prnq("RiUser.readRecordExt = in quOldExtElement");
+//            return false;
+//        }
+//        Records.quNewExtElement.add(y);
+//        assert prnq("RiUser.readRecordExt = ADDishen quNewExtElement");
+//        return true;//найден и добавлен новый элемент
+    }//readRecordExt
+
 },//URS
 /*    //=============================================================================
     MAILJ( FileType.mln) {//писок писем
@@ -453,6 +472,8 @@ ENDFL {
     public boolean readRecord(String[] words,int src) {//разбор строки внеш.файла
         return true;//условие прекращения дальнейшего анализа файла
     }//readExst
+    @Override
+    public boolean endLoad(){ return true;}
 };//END
     //==============================================================================
     private int         iadd;//количество добавленных элементов в список для сохранения
@@ -470,6 +491,11 @@ ENDFL {
     //методы
     public abstract void    writPL(BufferedWriter bw);//для переопределения
 
+    /**
+     * Флаг нахождения конца списка данных в файле. Переопределяется в ENDFL
+     * @return истина, если первое слово обозначает конец списка данных
+     */
+    public boolean endLoad(){ return false;}
     /**
      * Вызывается из GrRecords.ХХХХХ.writPL(BufferedWriter bw)
      * @param list список требуемого класса объекта записи
@@ -495,4 +521,26 @@ ENDFL {
      */
     public abstract boolean readRecord(String[] words,int src);//распознавание записи в строке
 
+    /**
+     * Распознавание строки файла внешних данных. Вызывается из FileType.loadExtDbf
+     * Создает элемент нужного типа с проверкой его существования в локальной базе
+     * @param words очередная строка данных
+     * @param src
+     * @return истина, если на основе данной строки были добавлены данные в локальную базу
+     */
+    public boolean readRecordExt(String[] words, int src){return false;}
+    private static boolean readRecordExtPubl(Records y){
+        if (y == null) return false;
+        for (Records j: Records.quNewExtElement) if (j.equals(y)){//проверяю новый список
+            assert prnq("RiUser.readRecordExt = in quNewExtElement");
+            return false;
+        }
+        for (Records j: Records.quOldExtElement) if (j.equals(y)){//проверяю старый список
+            assert prnq("RiUser.readRecordExt = in quOldExtElement");
+            return false;
+        }
+        Records.quNewExtElement.add(y);
+        assert prnq("RiUser.readRecordExt = ADDishen quNewExtElement");
+        return true;//найден и добавлен новый элемент
+    }//readRecordExtPubl
 }//enum FileGroupRecords

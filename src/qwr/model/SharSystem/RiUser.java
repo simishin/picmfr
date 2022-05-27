@@ -4,12 +4,11 @@
  * пользователя и времени создания.
  * Первый пользователь создается вместе с проектом и всегда имеет нулевой код.
  *
- *
- *
  * Класс описывающий пользователей проектов
- * имеет логин, полное имя, дополнительную информацию о пользователе,
- * дату создания (код пользователя) и кто создал (код пользователя) {user},
- * код использования в проектах (возможно хранение пароля) {pass}:
+ * код пользователя ( дату создания ) [key], имеет логин [login], полное имя [titul],
+ * дополнительную информацию о пользователе [descr],
+ * и кто создал (код пользователя) [user],
+ * код использования в проектах (возможно хранение пароля) [pass]:
  * 1-администратор проекта, создания и редактирования прав пользователей и просмотра записей
  * 2-пользователь, имеющий право изменения справочников и очистке записей помеченных под удаление
  * 3-пользователь проекта, имеющий право создания записей
@@ -17,7 +16,7 @@
  * 5-прользователь, имеющий право просмотра записей
  * 6-пользователь участвующий в создании записей других проектов
  * 7-более пользователь не встречается в кодах записей
- * вспомогательное поле времени создания (или номера/счетчика) записи, без сохранения
+ * вспомогательное поле времени создания (или номера/счетчика) записи[order], без сохранения
  *
  * Администратор может создавать пользователей проекта,
  * редактировать внешние пути, запускать процедуру удаления
@@ -75,6 +74,7 @@ public record RiUser(int key, String login, String titul, String descr,
         return k;
     }//genKey
 
+
     @Override
     public int hashCode() { return  key & 0xFFFFFFFF; }
 
@@ -86,8 +86,32 @@ public record RiUser(int key, String login, String titul, String descr,
     @Override
     public String toString() {//создание строки для записи в текстовый файл
         return sepr+ key +sepr+ user +sepr+ login +sepr+ titul +sepr+ descr
-                +sepr+ pass +sepr+ pass +sepr + change +sepr;
+                +sepr+ pass +sepr+ change +sepr+ order+sepr;
     }//toString-------------------------------------------------------------------------
+
+    /**
+     * Создание элемента нужного типа для помещения в очередь новых элементов
+     * полученных из внешних файлов. Вызывается из FileType.readRecordExt
+     * @param words срока из файла внешних данных
+     * @param src модифицированный номер типа файла по enum FileType
+     * @return новый элемент
+     */
+    public static Records creatExtDbf(String[] words, int src) {
+        assert prnq("$ RiUser.creatExtDbf NOT REALISE $");
+        if (words.length < sizeAr) {
+            for (int i = 0; i < words.length; i++) prnt("+  "+i+"-"+words[i]);prnq("~"+words.length);
+            return null; //недостаточное количество элементов
+        }
+        RiUser z;//this(key, login, titul, descr, user, pass, change, count++);
+        try { z=new RiUser(Integer.parseInt(words[1]),words[3],words[4],words[5],Integer.parseInt(words[2]),
+                    Integer.parseInt(words[6]),Integer.parseInt(words[7]),0);
+        }
+        catch (Exception ex) {ex.printStackTrace();return null;}
+        if (list.size()<1) return z;
+        for (Records x : list) if (z.equals((RiUser) x)) return null;
+        return z;
+    }//creatExtDbf
+
     /** интеграция данных в коллекцию вызывается из GrRecords.*.readRecord
      * @param words поток с исходными данными из массива слов строки ввода
      * @param src тип источника элемента
@@ -109,7 +133,7 @@ public record RiUser(int key, String login, String titul, String descr,
         }
         RiUser z;
         try { z= new RiUser(Integer.parseInt(words[1]),Integer.parseInt(words[2]), words[3],
-                words[4], words[5], Integer.parseInt(words[6]), Integer.parseInt(words[7]));
+                words[4], words[5], Integer.parseInt(words[6]), Integer.parseInt(words[7],0));
         }
         catch (Exception ex) {ex.printStackTrace();return -2;}
         if (list.size()<1) { list.add(z); return 4;}
