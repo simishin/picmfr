@@ -19,7 +19,12 @@ package qwr.model.Base;
  * Обязательные поля для любой записи:
  * 1) key или create - ключ записи с зашитым в него кодом создателя и временем создания
  * 2) change - ключ записи в замен которой создана данная запись
- * 3) order - счетчик записей и/или положение записи в списке (сохраняется)
+ * 3) order - счетчик записей и/или положение записи в списке (сохраняется) и содержит приоритет
+ * Любая запись должна содержать уровень приоритета в старших разрядах поля order
+ * 11-Глобальный всеобщий справочник (соглашение между проектами или базовые установки системы)
+ * 10-Общий справочник проекта (соглашение внутри проекта)
+ * 01-Устаревший элемент (далее не использовать)
+ * 00-данные из внешних таблиц, данные пользователя (данные пользователя)
  */
 
 import java.time.Instant;
@@ -29,16 +34,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static qwr.util.CollectUtl.prnq;
 
 public interface Records {
-	List<Records> quNewExtElement = new CopyOnWriteArrayList<>();
-	List<Records> quOldExtElement = new CopyOnWriteArrayList<>();
+	//списки используются в GrRecords.readRecordExt и LoadExternDataThread.workIntegrate
+	List<Records> quNewExtElement = new CopyOnWriteArrayList<>();//новый для добавления
+	List<Records> quUsrExtElement = new CopyOnWriteArrayList<>();//требует вмешательства
+	List<Records> quOldExtElement = new CopyOnWriteArrayList<>();//устаревшие из локальных данных
+
+//	int integrateExt();//попытка добавить элемент. 1-добавлен, 0-требует вмешательства, -1-устарел
 
 	public static Records creatExtDbf(String[] words, int i) {
 		assert prnq("$ Records.creatExtDbf NOT REALISE $");
 		return null;
-	}
+	}//creatExtDbf
 
 	long begSecund = 1610643835L;//2021-01-15T00:03 точка отсчета (public static final)
 	long getKey(); //ключ записи для метода генерации ключа makingKey
+	long key();
+	long change();
+	int  order();
+	List<Records> linkList();//Возвращение ссылки на список данного класса
 	/**
 	 * Поиск свободного кода для использования его в качестве ключа новой записи
 	 * @param list list список записей для которого готовится новый элемент

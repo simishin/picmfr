@@ -170,12 +170,5 @@ public class ReadExtDbf extends Thread {
 		long	jnext;	//следующее время просмотра
 		long	jpast;	//последнее время изменения
 		long	jcreat;	//время создания
-
-//		public String getJpath() { return jpath; }
-//		public void setJpath(String jpath) { this.jpath = jpath; }
-//		public long getJnext() { return jnext; }
-//		public void setJnext(long jnext) { this.jnext = jnext; }
-//		public long getJpast() { return jpast; }
-//		public void setJpast(long jpast) { this.jpast = jpast; }
 	}//class ReadFile
 }//class ReadExtDbf

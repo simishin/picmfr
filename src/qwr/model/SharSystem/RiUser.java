@@ -28,6 +28,7 @@ package qwr.model.SharSystem;
 import qwr.model.Base.PublStat;
 import qwr.model.Base.Records;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -46,9 +47,9 @@ public record RiUser(int key, String login, String titul, String descr,
         maxKey= (PublStat.dupDay()& 0x3FFF)<<2-1;
         assert prnq("~iniziall record RiUser");
     }//-----------------------------------------------------------------------
-    public RiUser(int key,int user,String login,String titul,String descr,int pass,int change) {
-        this(key, login, titul, descr, user, pass, change, count++);
-    }
+//    public RiUser(int key,int user,String login,String titul,String descr,int pass,int change) {
+//        this(key, login, titul, descr, user, pass, change, count++);
+//    }
     public RiUser(int key, int user, String login, String titul, String descr, int pass) {
         this(key, login, titul, descr, user, pass, PublStat.changeTime(), count++);
     }
@@ -90,10 +91,35 @@ public record RiUser(int key, String login, String titul, String descr,
     }//toString-------------------------------------------------------------------------
 
     /**
+     * попытка добавить элемент.
+     * Задан в интерфейсе. Вызывается из LoadExternDataThread.workIntegrate в потоке
+     * @return 1-добавлен, 0-требует вмешательства, -1-устарел
+     * по результату меняются списки quNewExtElement,quUsrExtElement,quOldExtElement
+     */
+//    @Override
+//    public int integrateExt() {
+//        assert prnq("$ RiUser.integrateExt ~"+this.login);
+//        for (Records y: list ){
+//            if (key == y.key()) return 1;
+//            if (change==y.key()) break;//добавляю замену
+//            if (key==y.change()) return -1;
+//            if (change==y.change()) return 0;
+//        }//for
+//        list.add(this);
+//        return 1;
+//    }//integrateExt
+
+    /**
+     * Возвращение ссылки на список данного класса
+     * @return ссылка на список данного класса
+     */
+    public List<Records> linkList(){ return list; }
+
+    /**
      * Создание элемента нужного типа для помещения в очередь новых элементов
      * полученных из внешних файлов. Вызывается из FileType.readRecordExt
      * @param words срока из файла внешних данных
-     * @param src модифицированный номер типа файла по enum FileType
+     * @param src номер элемента в enum GrRecords
      * @return новый элемент
      */
     public static Records creatExtDbf(String[] words, int src) {
@@ -107,7 +133,7 @@ public record RiUser(int key, String login, String titul, String descr,
                     Integer.parseInt(words[6]),Integer.parseInt(words[7]),0);
         }
         catch (Exception ex) {ex.printStackTrace();return null;}
-        if (list.size()<1) return z;
+        if (list.isEmpty()) return z;
         for (Records x : list) if (z.equals((RiUser) x)) return null;
         return z;
     }//creatExtDbf
@@ -132,11 +158,11 @@ public record RiUser(int key, String login, String titul, String descr,
             return -2; //недостаточное количество элементов
         }
         RiUser z;
-        try { z= new RiUser(Integer.parseInt(words[1]),Integer.parseInt(words[2]), words[3],
-                words[4], words[5], Integer.parseInt(words[6]), Integer.parseInt(words[7],0));
+        try { z=new RiUser(Integer.parseInt(words[1]),words[3],words[4],words[5],Integer.parseInt(words[2]),
+                Integer.parseInt(words[6]),Integer.parseInt(words[7]),count++);
         }
         catch (Exception ex) {ex.printStackTrace();return -2;}
-        if (list.size()<1) { list.add(z); return 4;}
+        if (list.isEmpty()) { list.add(z); return 4;}
         boolean jPresent=true;
         //просматриваю на наличие по key
         for (Records x : list) {

@@ -14,6 +14,13 @@
  * Данное перечисление позволяет унифицировать сохранение и чтение внешних данных структур.
  * Поскольку внешних данных много, то данное перечисление ориентирую на локальные данные.
  * Добавляю поля: флаг изменений??????
+ *
+ * уровень важности элемента определяется не типом файла, а ключём строки в файле !!!!
+ * любая запись должна содержать уровень приоритета в старших разрядах поля order
+ * 11-Глобальный всеобщий справочник (соглашение между проектами или базовые установки системы)
+ * 10-Общий справочник проекта (соглашение внутри проекта)
+ * 01-Устаревший элемент (далее не использовать)
+ * 00-данные из внешних таблиц, данные пользователя (данные пользователя)
  */
 package qwr.model.SharSystem;
 
@@ -119,7 +126,7 @@ USERS( FileType.cfg){//вспомогательный - количество п�
     }//readExst
     @Override //---------------------------------------------------------------------
     public boolean readRecordExt(String[] words,int src) {//разбор строки внеш.файла
-        return GrRecords.readRecordExtPubl(RiUser.creatExtDbf(words,src & 7));
+        return GrRecords.readRecordExtPubl(RiUser.creatExtDbf(words,ordinal()));
 //        Records y = RiUser.creatExtDbf(words,src & 7);
 //        if (y == null) return false;
 //        for (Records j: Records.quNewExtElement) if (j.equals(y)){//проверяю новый список
@@ -529,10 +536,20 @@ ENDFL {
      * @return истина, если на основе данной строки были добавлены данные в локальную базу
      */
     public boolean readRecordExt(String[] words, int src){return false;}
-    private static boolean readRecordExtPubl(Records y){
+
+    /**
+     * Общая часть кода вызываемая из GrRecords.readRecordExt
+     * @param y
+     * @return истина, если на основе данной строки были добавлены данные в локальную базу
+     */
+    private static boolean readRecordExtPubl(Records y){//
         if (y == null) return false;
         for (Records j: Records.quNewExtElement) if (j.equals(y)){//проверяю новый список
             assert prnq("RiUser.readRecordExt = in quNewExtElement");
+            return false;
+        }
+        for (Records j: Records.quUsrExtElement) if (j.equals(y)){//проверяю список вмешательства
+            assert prnq("RiUser.readRecordExt = in quUsrExtElement");
             return false;
         }
         for (Records j: Records.quOldExtElement) if (j.equals(y)){//проверяю старый список
@@ -543,4 +560,4 @@ ENDFL {
         assert prnq("RiUser.readRecordExt = ADDishen quNewExtElement");
         return true;//найден и добавлен новый элемент
     }//readRecordExtPubl
-}//enum FileGroupRecords
+}//enum GrRecords
